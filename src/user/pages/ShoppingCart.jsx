@@ -7,20 +7,13 @@ import { jwtDecode } from 'jwt-decode';
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [buyerID, setBuyerID] = useState('');
-  useEffect(() => {
-    try {
-      const token = sessionStorage.getItem('jwtToken');
-      const decodedData = jwtDecode(token);
-      setBuyerID(decodedData.email);
-      console.log(decodedData.email)
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-  }, []);
+
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const cartData = await getCartItems(buyerID);
+        const token = sessionStorage.getItem('jwtToken');
+        const decodedData = jwtDecode(token);
+        const cartData = await getCartItems(decodedData.email);
         setCartItems(cartData);
       } catch (error) {
         console.error('Error fetching cart details:', error);
