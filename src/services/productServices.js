@@ -154,6 +154,17 @@ export const getProductsBySellerID = async (id) => {
     }
 };
 
+  //function to get product list by seller ID with pagination
+  export const getProductsBySellerIDPage = async (id ,pageNumber,pageSize) => {
+    try {
+        const response = await axiosInstance.get(`/Product/farmer-product/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        throw error;
+    }
+};
+
   //function to get product list by seller ID  Product/${productId}
   export const deleteProduct = async (id) => {
     try {

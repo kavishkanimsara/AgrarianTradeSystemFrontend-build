@@ -151,7 +151,7 @@ export default function BuyerTabAndTables({ defaultTab }) {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((values) => {
+              {filteredData.slice().reverse().map((values) => {
                 const {
                   orderID,
                   productTitle,

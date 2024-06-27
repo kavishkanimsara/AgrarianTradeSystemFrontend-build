@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CheckoutCard = ({cartItems}) => {
+const CheckoutCard = ({cartItems, openModel}) => {
         // Function to calculate total price of each item
 const calculateTotalPrice = (item) => {
     return item.quantity * item.price;
@@ -34,7 +34,7 @@ const calculateTotalPrice = (item) => {
                         <p>Rs {(sumTotalPrices + shippingCost).toFixed(2)}</p>
                     </div>
                     <div className='mt-3 py-3'>
-                        <button className='bg-primary w-full rounded-md text-white py-2 text-sm hover:bg-green-500'>Checkout Order</button>
+                        <button className='bg-primary w-full rounded-md text-white py-2 text-sm hover:bg-green-500' onClick={openModel}>Checkout Order</button>
                     </div>
                 </div>
             </div>

@@ -1,20 +1,22 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import axios from "axios"
-import { PencilIcon, UserPlusIcon, } from "@heroicons/react/24/solid";
+import { PencilIcon } from "@heroicons/react/24/solid";
 import { HiTrash } from "react-icons/hi2";
 import moment from 'moment';
 import Swal from 'sweetalert2'
-import { Card, CardHeader,Typography,Button,CardBody,CardFooter,Avatar,IconButton,Tooltip,} from "@material-tailwind/react";
-import { deleteProduct, getProductsBySellerID } from '@/services/productServices';
+import { Card, CardHeader, Typography, Button, CardBody, CardFooter, Avatar, IconButton, Tooltip, } from "@material-tailwind/react";
+import { deleteProduct, getProductsBySellerIDPage } from '@/services/productServices';
 import { jwtDecode } from 'jwt-decode';
 const TABLE_HEAD = ["Product", "Product Number", "Date Created", "Unit Price", "Stock", "Minimum Order", "", ""];
 
 const MyProductsTable = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const  PopupHandler = (id) =>{
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const pageSize = 5;
+  const PopupHandler = (id) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -25,7 +27,7 @@ const MyProductsTable = () => {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        if(id != 0){
+        if (id != 0) {
           deleteConfirmHandler(id);
         }
         console.log("deleted");
@@ -34,30 +36,48 @@ const MyProductsTable = () => {
           text: "Your file has been deleted.",
           icon: "success"
         });
-      }else{
+      } else {
         console.log("Canceled " + id);
       }
     });
   }
-  //get product list by seller ID
-  const fetchProducts = async () => {
-       const token = sessionStorage.getItem('jwtToken');
-        const decodedData = jwtDecode(token);
-        const sellerID = decodedData.email;
+  const fetchProducts = async (pageNum) => {
+    const token = sessionStorage.getItem('jwtToken');
+    const decodedData = jwtDecode(token);
+    const sellerID = decodedData.email;
     try {
-      const productData = await getProductsBySellerID(sellerID);
-      setProducts(productData);
+      const productData = await getProductsBySellerIDPage(sellerID, pageNum, pageSize);
+      setProducts(productData.items);
+      console.log(productData);
+      setTotalPages(productData.totalPages);
     } catch (error) {
       console.error('Error fetching cart details:', error);
     }
   };
+  //handle page increase
+  const handlePageIncrease = () => {
+    if (page >= totalPages) {
+      return;
+    }
+    setPage(page + 1);
+    fetchProducts(page + 1);
+  }
+
+  //handle page decrease
+  const handlePageDecrease = () => {
+    if (page <= 1) {
+      return;
+    }
+    setPage(page - 1);
+    fetchProducts(page - 1);
+  };
   //delete product
-  const deleteConfirmHandler = async (productId) =>{
+  const deleteConfirmHandler = async (productId) => {
     const result = await deleteProduct(productId);
-    fetchProducts();
+    fetchProducts(page);
   }
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(page);
   }, []);
   return (
     <div>
@@ -191,20 +211,20 @@ const MyProductsTable = () => {
                     <td className="p-4 border-b border-blue-gray-50">
                       <Tooltip content="Edit Product">
                         <IconButton variant="text"
-                         onClick={()=> navigate(`/dashboard/update-product/${p.productID}`)}
+                          onClick={() => navigate(`/dashboard/update-product/${p.productID}`)}
                         >
                           <PencilIcon className="h-4 w-4"
-                           />
+                          />
                         </IconButton>
                       </Tooltip>
                     </td>
                     <td className="p-4 border-b border-blue-gray-50">
                       <Tooltip content="Delete Product">
                         <IconButton variant="text" color='red'
-                         onClick={()=> PopupHandler(p.productID)}
+                          onClick={() => PopupHandler(p.productID)}
                         >
-                          <HiTrash className="h-4 w-4" 
-/>
+                          <HiTrash className="h-4 w-4"
+                          />
                         </IconButton>
                       </Tooltip>
                     </td>
@@ -217,13 +237,13 @@ const MyProductsTable = () => {
         </CardBody>
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Page 1 of 10
+            Page {page} of {totalPages}
           </Typography>
           <div className="flex gap-2">
-            <Button variant="outlined" size="sm">
+            <Button variant="outlined" size="sm" onClick={handlePageDecrease}>
               Previous
             </Button>
-            <Button variant="outlined" size="sm">
+            <Button variant="outlined" size="sm" onClick={handlePageIncrease}>
               Next
             </Button>
           </div>

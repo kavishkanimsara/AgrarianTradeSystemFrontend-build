@@ -45,7 +45,7 @@ function Login(){
                 navigate('/dashboard/my-products');
             }
             if(decodedData.role=="User"){
-                navigate('/dashboard/my-products');
+                navigate('/buyers/my-orders');
             }
         }
         catch (error){
