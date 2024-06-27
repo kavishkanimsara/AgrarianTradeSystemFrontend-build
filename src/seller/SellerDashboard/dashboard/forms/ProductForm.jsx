@@ -92,6 +92,13 @@ const ProductForm = ({ onSubmitData, productData, isUpdate ,handleupdateImage })
     if (!isUpdate && !selectedFile) {
       errors.selectedFile = 'Product Image is required!';
     }
+     // Validate file type
+     if (selectedFile) {
+      const validFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!validFileTypes.includes(selectedFile.type)) {
+          errors.selectedFile = 'Only PNG and JPG files are allowed!';
+      }
+  }
     setErrors(errors);
 
     return Object.keys(errors).length === 0;

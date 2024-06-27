@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { BsX } from "react-icons/bs";
+import Swal from 'sweetalert2';
 const FileUpload = ({ onFileSelect }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const handleDragOver = (event) => {
@@ -14,7 +15,6 @@ const FileUpload = ({ onFileSelect }) => {
   const handleDrop = (event) => {
     event.preventDefault();
     event.target.classList.remove('border-blue-500');
-
     const file = event.dataTransfer.files[0];
     setSelectedFile(file);
     onFileSelect(file);
@@ -24,11 +24,29 @@ const FileUpload = ({ onFileSelect }) => {
     setSelectedFile(null);
     onFileSelect(null);
   };
+  const errorAlert =()=>{
+    Swal.fire({
+      title: "Invalid File Type",
+      text: "Only PNG and JPG files are allowed!",
+      icon: "error"
+    });
+  }
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
-    onFileSelect(file);
-  };
+
+    // List of accepted file types
+    const validFileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+    // Check if a file is selected and its type is valid
+    if (file && validFileTypes.includes(file.type)) {
+        setSelectedFile(file);
+        onFileSelect(file);
+    } else {
+        errorAlert();
+        setSelectedFile(null);
+        onFileSelect(null);
+    }
+};
 
   return (
     <div className="flex items-center justify-center w-full">
