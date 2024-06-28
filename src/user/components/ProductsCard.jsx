@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Rating,
 } from "@material-tailwind/react";
@@ -6,6 +6,16 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaWeight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 const ProductsCard = (props) => {
+  const [reviews, setReviews] = useState(0);
+  const id = props.productID;
+  const getReviews = async () => {
+    const data = await getReviewsForProduct(id);
+    setReviews(data.length);
+  }
+
+  useEffect(() => {
+    getReviews()
+  }, [id])
   
   return (
     <div>
@@ -22,7 +32,7 @@ const ProductsCard = (props) => {
             <div className="mb-3 flex items-center justify-between">
               <Rating value={4} readonly  />
               <div>
-                <p className=' text-xs text-gray-700'>Reviews (4)</p>
+              <p className=' text-xs text-gray-700'>Reviews ({reviews})</p>
               </div>
             </div>
             <div className=' my-3'>

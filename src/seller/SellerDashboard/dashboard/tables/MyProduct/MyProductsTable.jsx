@@ -48,7 +48,6 @@ const MyProductsTable = () => {
     try {
       const productData = await getProductsBySellerIDPage(sellerID, pageNum, pageSize);
       setProducts(productData.items);
-      console.log(productData);
       setTotalPages(productData.totalPages);
     } catch (error) {
       console.error('Error fetching cart details:', error);

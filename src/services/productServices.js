@@ -165,6 +165,17 @@ export const getProductsBySellerID = async (id) => {
     }
 };
 
+ //function to get product list with pagination and order count
+ export const getAllProductsPage = async (pageNumber,pageSize) => {
+  try {
+      const response = await axiosInstance.get(`/Product/product-list?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching product:', error);
+      throw error;
+  }
+};
+
   //function to get product list by seller ID  Product/${productId}
   export const deleteProduct = async (id) => {
     try {
