@@ -30,10 +30,10 @@ const ProductsCard = (props) => {
           {/* card body */}
           <div className='px-4 py-4'>
             <div className="mb-3 flex items-center justify-between">
-              <Rating value={4} readonly  />
-              <div>
-              <p className=' text-xs text-gray-700'>Reviews ({reviews})</p>
-              </div>
+              {/* <Rating value={4} readonly  /> */}
+              {/* <div> */}
+              {/* <p className=' text-xs text-gray-700'>Reviews ({reviews})</p>
+              </div> */}
             </div>
             <div className=' my-3'>
               <h1 className='text-lg font-semibold text-gray-800'>{props.productTitle}</h1>

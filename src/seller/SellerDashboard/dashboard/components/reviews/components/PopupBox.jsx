@@ -15,12 +15,13 @@ export default function PopupBox({ open, setOpen, id }) {
   const handleClose = () => {
     setOpen(false)
   }
-
+ 
   const handleSubmit = async () => {
     const res = await addReply(id, reply);
 
     if (res.status === 200) {
       setOpen(false);
+      window.location.reload();
     } else {
       console.log("Error adding reply")
     }
