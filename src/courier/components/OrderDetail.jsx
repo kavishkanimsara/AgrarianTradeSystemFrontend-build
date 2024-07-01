@@ -4,22 +4,25 @@ import Swal from "sweetalert2";
 import { Pickup_Drop_Detail } from "./Pickup_Drop_Detail";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios"; // HTTP client for making API requests
+import { sendNotification } from "@/services/notificationService";
+import { fetchCourierDetails, updateOrderStatus } from "@/services/orderServices";
 
 const OrderDetail = () => {
   const { id } = useParams(); // Get the id parameter from the URL using useParams hook
   const navigate = useNavigate();
   const [data, setData] = useState([]); // State variable to hold order details
 
-  // Fetch order details
   useEffect(() => {
-    axios
-      .get(`https://localhost:7144/api/Order/courier/details/${id}`)
-      .then((response) => {
-        setData(response.data[0]);
-      })
-      .catch((error) => {
-        console.error("Error fetching order details:", error);
-      });
+    const fetchOrderDetails = async () => {
+      try {
+        const orderData = await fetchCourierDetails(id);
+        setData(orderData);
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+      }
+    };
+  
+    fetchOrderDetails();
   }, [id]);
 
   const popupAccept = () => {
@@ -49,20 +52,15 @@ const OrderDetail = () => {
   const handleAccept = async () => {
     try {
       // Prepare notification object
-      const notificationObj = {
+      const notificationData = {
         id: 0,
         from: "john.doe@example.com",
         to: data.farmerID,
         message: "Your Orders has been accepted",
         isSeen: false,
       };
-
-      // Send notification using API endpoint
-      const notificationResponse = await axios.post(
-        "https://localhost:7144/api/Notification",
-        notificationObj
-      );
-      console.log("Notification sent:", notificationResponse.data);
+      const response = await sendNotification(notificationData);
+      console.log("Notification sent:", response.data);
     } catch (error) {
       console.error("Error:", error.message);
       alert("Error sending notification: " + error.response.data);
@@ -105,11 +103,7 @@ const OrderDetail = () => {
         isSeen: false,
       };
 
-      // Send notification using API endpoint
-      const notificationResponse = await axios.post(
-        "https://localhost:7144/api/Notification",
-        notificationObj
-      );
+      const notificationResponse = await sendNotification(notificationObj);
       console.log("Notification sent:", notificationResponse.data);
     } catch (error) {
       alert("Error sending notification: " + error.response.data);
@@ -118,18 +112,14 @@ const OrderDetail = () => {
   };
 
   // Function to update order status in the database
-  const handleUpdateStatus = (orderID, newStatus) => {
-    axios
-      .put(
-        `https://localhost:7144/api/Order/${orderID}?orderStatus=${newStatus}`,
-        { orderStatus: newStatus }
-      )
-      .then((response) => {
-        console.log("Order status updated successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error updating order status:", error);
-      });
+  const handleUpdateStatus = async (orderID, newStatus) => {
+    try {
+      const response = await updateOrderStatus(orderID, newStatus);
+      console.log("Order status updated successfully:", response);
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      // Optionally, show a notification to the user
+    }
   };
 
   if (!data) {
