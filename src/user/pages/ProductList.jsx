@@ -8,8 +8,6 @@ import { useEffect, useState } from 'react'
 import SortBar from '../components/SortBar'
 import LoadingProducts from '@/courier/components/LoadingProducts'
 import { getAllProductsPage, getSortedProducts } from '@/services/productServices'
-import { set } from 'date-fns'
-import { PaginationItem } from '@mui/material';
 import { PaginationBar } from '../components/PaginationBar';
 
 const useQuery = () => {
@@ -24,6 +22,9 @@ const ProductList = () => {
   const [sortedProducts, setSortedProducts] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [filters, setFilters] = useState();
+  const[selectedProductType,setSelectedProductType] = useState('');
+  const[selectedCategory,setSelectedCategory] = useState('');
 
   const fetchProducts = async (pageNum) => {
     try {
@@ -35,6 +36,13 @@ const ProductList = () => {
         setTotalPages(response.totalPages);
         data = response.items;
       }
+      // Apply filters to the fetched data
+      if (selectedProductType) {
+        data = data.filter(product => product.productType === selectedProductType);
+      }
+      if (selectedCategory) {
+        data = data.filter(product => product.category === selectedCategory);
+      }
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
@@ -44,8 +52,8 @@ const ProductList = () => {
 
   useEffect(() => {
     fetchProducts(page);
-  }, [sortedProducts]);
-  
+  }, [sortedProducts, page]);
+
   useEffect(() => {
     if (searchTerm) {
       const searchProducts = async () => {
@@ -60,19 +68,19 @@ const ProductList = () => {
     }
   }, [searchTerm]);
 
-  const handlePageNumber= (pageNum) => {
+  const handlePageNumber = (pageNum) => {
     setPage(pageNum);
-    fetchProducts(pageNum);
-  }
+  };
 
-  const applyFilters = (filteredData) => {
+  const applyFilters = (filteredData, appliedFilters) => {
     setFilteredProducts(filteredData);
+    setFilters(appliedFilters);
   };
 
   const handleSearchData = async (searchData) => {
     setFilteredProducts(searchData);
   };
-  // sort products based on selected sorting option
+
   const handleSortedData = (sortedData) => {
     if (sortedData === 'asc' || sortedData === 'desc') {
       setSortedProducts(sortedData);
@@ -80,14 +88,25 @@ const ProductList = () => {
       setSortedProducts(null);
     }
   };
+
+  //handleSelectType ,handlSelectCategory
+  const handleSelectType = (type) => {
+    setSelectedProductType(type);
+    console.log('Selected Product Type:', type);
+  };
+  const handlSelectCategory = (category) => {
+    setSelectedCategory(category);
+    console.log('Selected Category:', category);
+  }
+
   return (
     <div>
       <MainNav getSearchResults={handleSearchData} />
       <SortBar handleSortedData={handleSortedData} />
       <div className='grid grid-cols-5'>
-        <Filterbar items={products} applyFilters={applyFilters} />
+        <Filterbar items={products} applyFilters={(filteredData) => applyFilters(filteredData, filters)} handlSelectCategory={handlSelectCategory} handleSelectType={handleSelectType} />
         <div className=' col-span-4 overflow-y-auto bg-secondary min-h-screen'>
-          <div className='flex flex-wrap py-4  px-4 gap-4'>
+          <div className='flex flex-wrap py-4 px-4 gap-4'>
             {filteredProducts.length > 0 ?
               filteredProducts.map((product, index) => {
                 const key = product.productID || index
@@ -102,19 +121,17 @@ const ProductList = () => {
                     unitPrice={product.unitPrice}
                   />
                 );
-              },
-              ) :
+              }) :
               <LoadingProducts />
             }
           </div>
           <div className='flex justify-center py-8 mt-4'>
-            <PaginationBar totalPages={totalPages} setPage={handlePageNumber}/>
+            <PaginationBar totalPages={totalPages} setPage={handlePageNumber} />
           </div>
         </div>
       </div>
     </div>
-
   )
 }
 
-export default ProductList
+export default ProductList;

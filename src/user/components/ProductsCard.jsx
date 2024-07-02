@@ -5,6 +5,7 @@ import {
 import { FaLocationDot } from "react-icons/fa6";
 import { FaWeight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { getReviewsForProduct } from '@/services/reviewServices';
 const ProductsCard = (props) => {
   const [reviews, setReviews] = useState(0);
   const id = props.productID;
