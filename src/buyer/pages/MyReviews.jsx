@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import axios from 'axios';
 import { getProductsToReview, getReviewHistory } from '@/services/reviewServices';
@@ -6,29 +6,32 @@ import { jwtDecode } from 'jwt-decode';
 
 const MyReviewsPage = () => {
 
-  const [productData, setProductData] = useState([]); 
+  const [productData, setProductData] = useState([]);
   const [historyData, setHistoryData] = useState([]);
   const [buyerID, setBuyerID] = useState('');
   useEffect(() => {
-    try{
+    try {
       const token = sessionStorage.getItem('jwtToken');
       const decodedData = jwtDecode(token);
+      console.log("DecodedData: ", decodedData);
       setBuyerID(decodedData.email);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
   }, []);
   const fetchProducts = async () => {
-   const productHistory = await getProductsToReview(buyerID);
-   const reviewHistory = await getReviewHistory(buyerID)
+    const productHistory = await getProductsToReview(buyerID);
+    const reviewHistory = await getReviewHistory(buyerID)
 
-   setProductData(productHistory);
-   setHistoryData(reviewHistory);
+    setProductData(productHistory);
+    setHistoryData(reviewHistory);
   }
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (buyerID) {
+      fetchProducts();
+    }
+  }, [buyerID]);
 
   const NavLinkStyles = ({ isActive }) => {
     return {
@@ -37,7 +40,7 @@ const MyReviewsPage = () => {
       backgroundColor: isActive ? 'rgb(102 187 106 / var(--tw-bg-opacity))' : 'transparent',
       color: isActive ? 'white' : 'black',
       padding: '3px',
-      borderRadius: '8px',  
+      borderRadius: '8px',
     };
   };
 

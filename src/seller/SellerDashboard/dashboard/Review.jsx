@@ -32,6 +32,13 @@ const data = [
 ];
 
 export const SingleReview = (props) => {
+  const [duration, setDuration] = useState();
+
+  useEffect(() => {
+    setDuration(Number(new Date().getFullYear()) - Number(props.date.split(" ")[2]))
+
+  }, [])
+
   return (
     <>
       <div className='flex'>
@@ -45,7 +52,7 @@ export const SingleReview = (props) => {
         <div className='ml-8'>
           <Rating value={props.rating} />
         </div>
-        <p className='ml-96 text-blue-gray-800'>2 years ago...</p>
+        <p className='ml-96 text-blue-gray-800'>{duration} year(s) ago...</p>
       </div>
       <p className='py-5 px-28 text-blue-gray-800' style={{ ...paragraStyles }}>
         {props.comment}
@@ -68,7 +75,7 @@ export const SingleReview = (props) => {
       </>}
 
       {props.sellerName && <div className=' my-8 flex ml-[750px]'>
-        <Button className="color bg-green-400 " onClick={props.handlePopupOpen} >{props.isSubmited ? "Edit" : "Reply"}</Button>
+        <Button className="color bg-green-400 " onClick={props.handlePopupOpen} >{props?.reply ? "Edit" : "Reply"}</Button>
       </div>}
 
       <div className='pb-2 mb-2'></div>

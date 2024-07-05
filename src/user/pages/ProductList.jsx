@@ -36,6 +36,7 @@ const ProductList = () => {
         data = response.items;
       }
       setProducts(data);
+      console.log(data)
       setFilteredProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);

@@ -9,13 +9,13 @@ import { jwtDecode } from 'jwt-decode';
 export function MyReturnsBuyer() {
     const [buyerId, setBuyerID] = useState('');
     useEffect(() => {
-      try{
-        const token = sessionStorage.getItem('jwtToken');
-        const decodedData = jwtDecode(token);
-        setBuyerID(decodedData.email);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
+        try {
+            const token = sessionStorage.getItem('jwtToken');
+            const decodedData = jwtDecode(token);
+            setBuyerID(decodedData.email);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
     }, []);
     const navigate = useNavigate();
 
@@ -28,8 +28,10 @@ export function MyReturnsBuyer() {
     }
 
     useEffect(() => {
-        fetchReturns();
-    }, [])
+        if (buyerId) {
+            fetchReturns();
+        }
+    }, [buyerId])
 
     return (
         <>

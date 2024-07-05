@@ -11,9 +11,9 @@ export default function ReviewForm() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [reviewData, setReviewData] = useState({
-    SellerRating: 4,
-    DeliverRating: 4,
-    ProductRating: 4,
+    SellerRating: 0,
+    DeliverRating: 0,
+    ProductRating: 0,
     Comment: "",
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
