@@ -29,11 +29,11 @@ function formatDate(dateString) {
 const History = () => {
   const [buyerId, setBuyerID] = useState('');
   useEffect(() => {
-    try{
+    try {
       const token = sessionStorage.getItem('jwtToken');
       const decodedData = jwtDecode(token);
+      console.log("DecodedData:", decodedData)
       setBuyerID(decodedData.email);
-      console.log(decodedData.email)
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -56,8 +56,10 @@ const History = () => {
   }
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    if (buyerId) {
+      fetchReviews();
+    }
+  }, [buyerId]);
   return (
     <>
       {reviews.length > 0 ? (

@@ -11,11 +11,23 @@ export function MyReturns() {
   const navigate = useNavigate();
 
   const [returns, setReturns] = useState([]);
-  
+
   const fetchReturns = async () => {
     const data = await getReturnsForfarmer(farmerId);
     console.log(data)
-    setReturns(data);
+    // Use a Map to store the first occurrence of each orderID
+    let orderMap = new Map();
+
+    data.forEach(order => {
+      if (!orderMap.has(order.orderID)) {
+        orderMap.set(order.orderID, order);
+      }
+    });
+
+    // Convert the Map back to an array to get the filtered list
+    let filteredOrders = Array.from(orderMap.values());
+
+    setReturns(filteredOrders);
   }
 
   useEffect(() => {

@@ -16,6 +16,7 @@ import PlaceOrderModal from '../components/PlaceOrderModal';
 import { addToCartProducts, getProductDetails } from '@/services/productServices';
 import { jwtDecode } from 'jwt-decode';
 import Review from '../components/Review';
+import { getReviewsForProduct } from '@/services/reviewServices';
 function Icon() {
   return (
     <svg
@@ -44,8 +45,10 @@ const ProductDetails = () => {
   const [modelOpen, setModelOpen] = useState(false);
   const navigate = useNavigate();
   const [buyerID, setBuyerID] = useState('');
+
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    try{
+    try {
       const token = sessionStorage.getItem('jwtToken');
       const decodedData = jwtDecode(token);
       setBuyerID(decodedData.email);
@@ -57,6 +60,9 @@ const ProductDetails = () => {
     const fetchProductDetails = async () => {
       try {
         const productData = await getProductDetails(id);
+        const data = await getReviewsForProduct(id);
+        setCount(data.length)
+        console.log(productData)
         setProduct(productData);
       } catch (error) {
         console.error('Error fetching product details:', error);
@@ -238,8 +244,8 @@ const ProductDetails = () => {
                 <div>
                   <h1 className='text-2xl md:text-3xl font-semibold text-gray-800'>{product.productTitle}</h1>
                   <div className="mb-3 flex md:gap-5 gap-3 items-center md:justify-between">
-                    <Rating value={4} readonly />
-                    <p className=' text-sm text-gray-700'>Reviews (4)</p>
+                    {/* <Rating value={4} readonly /> */}
+                    <p className=' text-sm text-gray-700'>Reviews ({count}) </p>
                   </div>
                 </div>
                 <p className=' flex items-center gap-3 font-semibold text-gray-600 text-lg'><span><FaLocationDot /></span>{product.farmerAddL3}</p>
@@ -295,7 +301,7 @@ const ProductDetails = () => {
           />
         </div>
       </div>
-      <Review id={id}/>
+      <Review id={id} />
     </div>
   )
 }

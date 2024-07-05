@@ -21,14 +21,6 @@ export function ReturnProductDetails() {
 
 
   const [returnImgs, setReturnImgs] = useState([
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
-    "https://tse1.mm.bing.net/th?id=OIP.bprm9Awwe2tzYwo80PtKIwHaE6&pid=Api&P=0&h=220",
   ])
   const data = [
     {
@@ -121,7 +113,7 @@ export function ReturnProductDetails() {
                   <p ><span className='font-semibold'>Customer Name: </span> {returnData?.buyerFName + " " + returnData?.buyerLName}</p>
                   <p><span className='font-semibold'>Customer Area:</span>  {returnData?.buyerAddL1 + "," + returnData?.buyerAddL2 + "," + returnData?.buyerAddL3}</p>
                   <p><span className='font-semibold'>Customer Contact No:</span> {returnData?.buyerPNumber} </p>
-                  <p ><span className='font-semibold'>Order ID:</span> {returnData?.orderId}</p>
+                  <p ><span className='font-semibold'>Order ID:</span> {returnData?.orderID}</p>
 
                   < hr className='my-4' />
                 </div>

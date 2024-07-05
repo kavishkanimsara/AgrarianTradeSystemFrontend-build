@@ -11,9 +11,10 @@ export const AddReviewCard = () => {
   const [historyData, setHistoryData] = useState([]);
   const [buyerId, setBuyerID] = useState('');
   useEffect(() => {
-    try{
+    try {
       const token = sessionStorage.getItem('jwtToken');
       const decodedData = jwtDecode(token);
+      console.log("DecodedData:", decodedData);
       setBuyerID(decodedData.email);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -23,11 +24,13 @@ export const AddReviewCard = () => {
   const fetchProducts = async () => {
     try {
       const productsToReview = await getProductsToReview(buyerId);
+      const reviewHistory = await getReviewHistory(buyerId);
 
-      console.log(productsToReview);
+      console.log("Product:", productsToReview);
+      console.log("History: ", reviewHistory)
 
       setProductData(productsToReview);
-      // setHistoryData(reviewHistory);
+      setHistoryData(reviewHistory);
     } catch (error) {
       console.error('Error fetching products or history:', error);
       // Handle errors appropriately, e.g., show a notification to the user
@@ -35,28 +38,43 @@ export const AddReviewCard = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []); // Fetch only once when the component mounts
+    if (buyerId) {
+      fetchProducts();
+    }
+  }, [buyerId]); // Fetch only once when the component mounts
 
 
   return (
     <>
 
-      {productData.map((item, index) => (
-        <ReviewCard
-          key={index}
-          id={item.orderID}
-          productId={item.productID}
-          type={item.productType}
-          iType={item.productName}
-          Button={"Review"}
-          img={item.productImageUrl}
-          description={item.productDescription}
-          stock={item.availableStock}
-          pDate={item.orderedDate?.split("T")[0]}
-          quantity={item.totalQuantity}
-        />
-      ))}
+      {productData.map((item, index) => {
+        let orderIDExists = historyData.some(otherOrder => otherOrder.orderID === item.orderID)
+
+        console.log(orderIDExists)
+
+        if (orderIDExists) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+        }
+
+        return (
+          <ReviewCard
+            key={index}
+            id={item.orderID}
+            productId={item.productID}
+            type={item.productType}
+            iType={item.productName}
+            Button={!item.disabled ? "Review" : "Reviewed"}
+            img={item.productImageUrl}
+            description={item.productDescription}
+            stock={item.availableStock}
+            pDate={item.orderedDate?.split("T")[0]}
+            quantity={item.totalQuantity}
+            disabled={item.disabled}
+          />
+        )
+      })}
     </>
 
   )

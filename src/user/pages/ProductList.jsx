@@ -44,6 +44,7 @@ const ProductList = () => {
         data = data.filter(product => product.category === selectedCategory);
       }
       setProducts(data);
+      console.log(data)
       setFilteredProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);

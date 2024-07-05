@@ -3,7 +3,7 @@ import { getOrderDetails, getReviewsForProduct, getSellerDetails } from '@/servi
 import { SingleReview } from '@/seller/SellerDashboard/dashboard/Review';
 import { formatDate } from '@/seller/SellerDashboard/dashboard/components/reviews/components/ReviewCard';
 
-const AllReview = ({id}) => {
+const AllReview = ({ id }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
 
@@ -13,24 +13,25 @@ const AllReview = ({id}) => {
 
   const getProductData = async () => {
     const data = await getOrderDetails(id);
+    console.log("Oreder Details:", data)
     setProduct(data);
   }
 
   const getReviews = async () => {
-    const data = await getReviewsForProduct(product?.productId);
-    console.log(data);
+    const data = await getReviewsForProduct(id);
+    console.log("Reviews:", data);
     setReviews(data);
   }
 
   const getSellerData = async () => {
     const data = await getSellerDetails(product?.productId);
-    console.log(data);
+    console.log("Seller Data:", data);
     setSeller(data);
   }
 
   useEffect(() => {
     getProductData()
-  }, [])
+  }, [id])
 
   useEffect(() => {
     getReviews()
@@ -40,27 +41,24 @@ const AllReview = ({id}) => {
 
   return (
     <div>
-       {reviews && reviews.map((r) => (
-            <SingleReview
-              userImg={"https://syntecblobstorage.blob.core.windows.net/profilepic/" + r?.buyerProfileImageUrl}
-              name={r?.buyerFirstName + " " + r?.buyerLastName}
-              date={r?.reviewDate ? formatDate(r.reviewDate.split('T')[0]) : ""}
-              rating={r?.productRating}
-              comment={r?.comment}
-              imgs={["https://syntecblobstorage.blob.core.windows.net/reviews/" + r?.reviewImageUrl]}
-              // sellerImg={"https://syntecblobstorage.blob.core.windows.net/profilepic/" + seller?.farmerProfileUrl}
-              // sellerName={seller?.farmerFName + " " + seller?.farmerLName}
-              // // replyDate={}
-              // reply={r?.reply}
-              // open={open}
-              // setOpen={setOpen}
-              // handleOpen={handleOpen}
-              // handlePopupOpen={handlePopupOpen}
-              // isSubmited={isSubmited}
-            />
-          ))}
+      {reviews && reviews.map((r) => (
+        <SingleReview
+          userImg={"https://syntecblobstorage.blob.core.windows.net/profilepic/" + r?.buyerProfileImageUrl}
+          name={r?.buyerFirstName + " " + r?.buyerLastName}
+          date={r?.reviewDate ? formatDate(r.reviewDate.split('T')[0]) : ""}
+          rating={r?.productRating}
+          comment={r?.comment}
+          imgs={["https://syntecblobstorage.blob.core.windows.net/reviews/" + r?.reviewImageUrl]}
+          sellerImg={"https://syntecblobstorage.blob.core.windows.net/profilepic/" + seller?.farmerProfileUrl}
+          // 
+          // setOpen={setOpen}
+          // handleOpen={handleOpen}
+          // handlePopupOpen={handlePopupOpen}
+          // isSubmited={isSubmited}
+        />
+      ))}
     </div>
-    
+
     // <div>
     //     <hr className='pt-11'></hr>
     //   <div className='flex '>
