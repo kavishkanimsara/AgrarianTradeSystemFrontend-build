@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Card,
-  CardBody,
-  Typography,
-} from "@material-tailwind/react";
-import { useParams } from 'react-router-dom';
+import { Card, CardBody, Typography } from "@material-tailwind/react";
+import { useParams, useLocation } from 'react-router-dom';
 import { CourierList } from './couriers/CourierList';
 import { SearchBar } from './SearchBar';
 import { getFarmerOrderDetails } from '@/services/orderServices';
@@ -14,6 +10,9 @@ function SelectCourier() {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
   const { id } = useParams();
+  const location = useLocation();
+  const { totalPrice, sellerID } = location.state || {};
+
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -26,7 +25,7 @@ function SelectCourier() {
     };
     fetchOrderDetails();
   }, [id]);
- 
+
   return (
     <>
       <div className='grid grid-cols-2 gap-4'>
@@ -39,18 +38,23 @@ function SelectCourier() {
 
               <div className="mb-4">
                 <div className="flex items-center mb-3">
+                  <p className="text-gray-600 mr-2">Order reference:</p>
+                  <p className="text-lg font-semibold">{data.orderID}</p>
+                </div>
+
+                <div className="flex items-center mb-3">
                   <p className="text-gray-600 mr-2">Order Item:</p>
                   <p className="text-lg font-semibold">{data.productTitle}</p>
                 </div>
 
                 <div className="flex items-center mb-3">
                   <p className="text-gray-600 mr-2">Quantity:</p>
-                  <p className="text-lg font-semibold">{data.totalQuantity}</p>
+                  <p className="text-lg font-semibold">{data.totalQuantity} Kg</p>
                 </div>
 
                 <div className="flex items-center mb-3">
                   <p className="text-gray-600 mr-2">Sub Total:</p>
-                  <p className="text-lg font-semibold">{data.totalPrice}</p>
+                  <p className="text-lg font-semibold">Rs.{totalPrice || data.totalPrice}</p>
                 </div>
               </div>
             </CardBody>
@@ -92,7 +96,7 @@ function SelectCourier() {
     
       {/* Render CourierList component with orderId prop */}
       <div className="mt-10 overflow-y-auto max-h-screen">
-        <CourierList search={search} orderId={data.orderID} />
+      <CourierList search={search} orderId={data.orderID} sellerID={sellerID} />
       </div>
     </>
   );
