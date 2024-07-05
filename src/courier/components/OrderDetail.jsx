@@ -2,20 +2,31 @@ import React, { useEffect, useState } from "react";
 import { Card, CardBody, Typography, Button } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import { Pickup_Drop_Detail } from "./Pickup_Drop_Detail";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios"; // HTTP client for making API requests
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import axios from "axios";
 import { sendNotification } from "@/services/notificationService";
 import { fetchCourierDetails, updateOrderStatus } from "@/services/orderServices";
+import moment from 'moment';
 
 const OrderDetail = () => {
-  const { id } = useParams(); // Get the id parameter from the URL using useParams hook
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [data, setData] = useState([]); // State variable to hold order details
+  const location = useLocation();
+  const [data, setData] = useState([]);
+
+  const { courierID } = location.state || {};
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
         const orderData = await fetchCourierDetails(id);
+        
+        // Format the deliveryDate using moment
+        if (orderData.deliveryDate) {
+          orderData.deliveryDate = moment(orderData.deliveryDate).format("YYYY-MM-DD");
+        }
+
+        console.log(orderData);
         setData(orderData);
       } catch (error) {
         console.error('Error fetching order details:', error);
@@ -54,7 +65,7 @@ const OrderDetail = () => {
       // Prepare notification object
       const notificationData = {
         id: 0,
-        from: "john.doe@example.com",
+        from: courierID,
         to: data.farmerID,
         message: "Your Orders has been accepted",
         isSeen: false,
@@ -97,8 +108,8 @@ const OrderDetail = () => {
       // Prepare notification object
       const notificationObj = {
         id: 0,
-        from: "john.doe@example.com",
-        to: "adam.jayasinghe@example.com",
+        from: courierID,
+        to: data.farmerID,
         message: "Your Orders has been rejected",
         isSeen: false,
       };
@@ -152,20 +163,18 @@ const OrderDetail = () => {
                 />
               </div>
               <CardBody style={{ marginLeft: "90px", marginTop: "15px" }}>
-                <Typography variant="h4" color="blue-gray" className="mb-2">
-                  Product: {data.productTitle}
+                <Typography variant="h4" color="green" className="mb-2">
+                  {data.productTitle}
                 </Typography>
-                <div className="flex-col items-center">
-                  <>
-                    <Typography color="black" className="mb-2 font-normal">
-                      <strong>Delivery Date</strong>&nbsp;:&nbsp;
-                      <span style={{ color: "gray" }}>before</span>{" "}
-                      <strong>{data.deliveryDate}</strong>
-                    </Typography>
-                    <Typography variant="h5" color="blue-gray" className="mb-2">
-                      Delivery Fee : {data.deliveryFee}
-                    </Typography>
-                  </>
+                <div className="flex flex-col items-start">
+                  <Typography color="black" className="mb-2 font-normal">
+                    <strong>Delivery Date</strong>&nbsp;:&nbsp;
+                    <span style={{ color: "gray" }}>before</span>{" "}
+                    <strong>{data.deliveryDate}</strong>
+                  </Typography>
+                  <Typography color="black" className="mb-2 font-normal">
+                    <strong>Delivery Fee</strong> : <span style={{ color: "gray" }}>Rs.</span><strong>{data.deliveryFee}</strong>
+                  </Typography>
                 </div>
               </CardBody>
             </Card>

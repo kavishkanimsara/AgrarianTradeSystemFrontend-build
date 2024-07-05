@@ -22,6 +22,24 @@ function DeliveryFee({
 
   const handleOpen = () => setOpen(!open);
 
+  const calculateDeliveryFee = (distance) => {
+    let fee = 0;
+    if (distance <= 10) {
+      fee = distance * 35;
+    } else if (distance <= 30) {
+      fee = 10 * 35 + (distance - 10) * 32;
+    } else if (distance <= 60) {
+      fee = 10 * 35 + 20 * 32 + (distance - 30) * 28;
+    } else if (distance <= 100) {
+      fee = 10 * 35 + 20 * 32 + 30 * 28 + (distance - 60) * 23;
+    } else if (distance <= 150) {
+      fee = 10 * 35 + 20 * 32 + 30 * 28 + 40 * 23 + (distance - 100) * 20;
+    } else {
+      fee = 10 * 35 + 20 * 32 + 30 * 28 + 40 * 23 + 50 * 20 + (distance - 150) * 17;
+    }
+    return fee.toFixed(2); // Return fee as a string with two decimal places
+  };
+
   const fetchDistance = async (destination) => {
     try {
       const matrix = new window.google.maps.DistanceMatrixService();
@@ -37,7 +55,7 @@ function DeliveryFee({
             const distanceValue = response.rows[0].elements[0].distance.value; // Distance in meters
             const distanceInKilometers = distanceValue / 1000; // Convert to kilometers
             setDistance(distanceInKilometers);
-            const fee = (distanceInKilometers * 50).toFixed(2); // 50 LKR per kilometer
+            const fee = calculateDeliveryFee(distanceInKilometers);
             setDeliveryFee(fee);
             handleDeliveryFee(fee);
             handleSelectDestination(destination);
@@ -127,4 +145,4 @@ function DeliveryFee({
   );
 }
 
-export default DeliveryFee
+export default DeliveryFee;

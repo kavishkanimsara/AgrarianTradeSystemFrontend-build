@@ -27,8 +27,11 @@ export default function CourierNewOrdersTab() {
     fetchOrders();
   }, []);
 
-  const handleRowClick = (id) => {  
-    navigate(`/couriers/new-orders/${id}`);
+  const handleRowClick = (id) => {
+    const token = sessionStorage.getItem('jwtToken');
+        const decodedData = jwtDecode(token);
+        const courierID = decodedData.email;
+        navigate(`/couriers/new-orders/${id}`, { state: { courierID } });
   };
 
   return (
@@ -42,7 +45,7 @@ export default function CourierNewOrdersTab() {
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Order reference</th>
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Order Placed</th>
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Quantity (Kg)</th>
-                <th className="p-4 py-5 font-bold w-24 text-center align-middle">Delivery Fee</th>
+                <th className="p-4 py-5 font-bold w-24 text-center align-middle">Delivery Fee (Rs)</th>
               </tr>
             </thead>
             <tbody>
