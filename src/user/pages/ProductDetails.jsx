@@ -77,6 +77,7 @@ const ProductDetails = () => {
       const token = sessionStorage.getItem('jwtToken');
       if (!token) {
         console.error('Token not found in sessionStorage.');
+        navigate('/login');
         return;
       }
       let decodedData;
@@ -85,6 +86,7 @@ const ProductDetails = () => {
         console.log('Decoded Data:', decodedData);
       } catch (error) {
         console.error('Failed to decode token:', error);
+        navigate('/login');
         return;
       }
       if (decodedData.role === 'User') {
