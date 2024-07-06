@@ -1,3 +1,4 @@
+"use client";
 import { React, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -12,14 +13,14 @@ export default function BuyerTabAndTables({ defaultTab }) {
   const location = useLocation();
   const [selectedRow, setSelectedRow] = useState(null);
   const navigate = useNavigate();
-  const [buyerID, setBuyerID] = useState('');
+  const [buyerID, setBuyerID] = useState("");
   useEffect(() => {
-    try{
-      const token = sessionStorage.getItem('jwtToken');
+    try {
+      const token = sessionStorage.getItem("jwtToken");
       const decodedData = jwtDecode(token);
       setBuyerID(decodedData.email);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error("Error fetching orders:", error);
     }
   }, []);
 
@@ -51,7 +52,7 @@ export default function BuyerTabAndTables({ defaultTab }) {
             item.orderStatus.toLowerCase() === "picked up" ||
             item.orderStatus.toLowerCase() === "review" ||
             item.orderStatus.toLowerCase() === "return" ||
-            item.orderStatus.toLowerCase() === "new" 
+            item.orderStatus.toLowerCase() === "new"
         );
       } else if (statusItem === "Delivered") {
         result = data.filter(
@@ -64,6 +65,11 @@ export default function BuyerTabAndTables({ defaultTab }) {
           (item) => item.orderStatus.toLowerCase() === statusItem.toLowerCase()
         );
       }
+
+      result.sort(
+        (a, b) => new Date(b.orderedDate) - new Date(a.orderedDate)
+      );
+
       setFilteredData(result);
     };
     filterResult(tab);
@@ -129,7 +135,7 @@ export default function BuyerTabAndTables({ defaultTab }) {
       </div>
 
       <div>
-        <div className=" flex-col justify-center text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border mt-8">
+        <div className=" flex-col justify-center text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border mt-8 hidden sm:block">
           <table className="w-full text-left table-auto min-w-max">
             <thead>
               <tr class="border-b border-primary">
@@ -151,7 +157,7 @@ export default function BuyerTabAndTables({ defaultTab }) {
               </tr>
             </thead>
             <tbody>
-              {filteredData.slice().reverse().map((values) => {
+              {filteredData.map((values) => {
                 const {
                   orderID,
                   productTitle,
@@ -211,28 +217,27 @@ export default function BuyerTabAndTables({ defaultTab }) {
                     </td>
                     <td className="p-3 w-24 text-center align-middle">
                       {orderStatus.toLowerCase() === "ready to pickup" && (
-                        <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Ready to Pickup
                         </p>
                       )}
                       {(orderStatus.toLowerCase() === "new" ||
                         orderStatus.toLowerCase() === "pending") && (
-                        <p className=" bg-yellow-400 rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-yellow-400 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           New Order
                         </p>
                       )}
                       {orderStatus.toLowerCase() === "picked up" && (
-                        <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased  leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Picked up
                         </p>
                       )}
                       {(orderStatus.toLowerCase() === "review" ||
                         orderStatus.toLowerCase() === "return") && (
-                        <p className=" bg-primary rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-primary rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Delivered
                         </p>
                       )}
-                      
                     </td>
                   </tr>
                 );
@@ -243,31 +248,33 @@ export default function BuyerTabAndTables({ defaultTab }) {
         <div class="sm:hidden">
           {filteredData.map((values) => {
             const {
-              orderId,
-              product,
+              orderID,
+              productTitle,
               orderedDate,
-              deliveryDate,
               totalQuantity,
-              photoName,
-              status,
+              productImageUrl,
+              deliveryDate,
+              orderStatus,
             } = values; //destructuring
             return (
               <>
                 <div className="group bg-gray-200 border hover:border hover:border-primary hover:bg-green-50 transition duration-300 ease-out  p-4  rounded-lg shadow mt-8  ">
-                  <Link to={`/buyers/my-orders/${orderId}`}>
+                  <Link to={`/buyers/my-orders/${orderID}`}>
                     <div className="grid grid-cols-2 gap-x-10 mt-2">
                       <div>
-                        <img
-                          src={photoName}
-                          alt={product}
-                          className="w-24 h-14 pl-8"
+                        <Avatar
+                          src={
+                            "https://syntecblobstorage.blob.core.windows.net/products/" +
+                            productImageUrl
+                          }
+                          size="xl"
                         />
                         <div className="pl-5 mt-8">
                           <div className="text-md pb-2 font-medium text-gray-700 ">
-                            {product} - {totalQuantity}Kg
+                            {productTitle} - {totalQuantity}Kg
                           </div>
                           <div className="text-sm italic text-gray-400">
-                            {orderId}
+                            {orderID}
                           </div>
                         </div>
                       </div>
@@ -277,23 +284,30 @@ export default function BuyerTabAndTables({ defaultTab }) {
                             <div className="text-sm "> Ordered Date:</div>
                             <div className="text-md font-semibold">
                               {" "}
-                              {orderedDate}
+                              {formatDate(orderedDate)}
                             </div>
                           </div>
                           <div>
-                            {status === "Ready to pickup" && (
-                              <p class=" bg-red-200 rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
-                                {status}
+                            {orderStatus === "ready to pickup" && (
+                              <p class=" bg-red-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                                Ready to pickup
                               </p>
                             )}
-                            {status === "Picked up" && (
-                              <p class=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
-                                {status}
+                            {orderStatus === "picked up" && (
+                              <p class=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                                Picked up
                               </p>
                             )}
-                            {(status === "review" || status === "return") && (
-                              <p class=" bg-primary rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
-                                {status}
+                          {(orderStatus === "new" ||
+                              orderStatus === "pending") && (
+                              <p class=" bg-yellow-400 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                                New Order
+                              </p>
+                            )}
+                            {(orderStatus === "review" ||
+                              orderStatus === "return") && (
+                              <p class=" bg-primary rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                                Delivered
                               </p>
                             )}
                           </div>
@@ -301,7 +315,7 @@ export default function BuyerTabAndTables({ defaultTab }) {
                             <div className="text-sm "> Delivery Date:</div>
                             <div className="text-md font-semibold">
                               {" "}
-                              {deliveryDate}
+                              {formatDate(deliveryDate)}
                             </div>
                           </div>
                         </div>
