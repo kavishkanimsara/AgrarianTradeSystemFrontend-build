@@ -5,11 +5,13 @@ import FileSelect from './FileSelect';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addReview, getOrderDetails } from '@/services/reviewServices';
 import { formatDate } from '@/seller/SellerDashboard/dashboard/components/reviews/components/ReviewCard';
+import { set } from 'date-fns';
 
 export default function ReviewForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const[loading,setLoading] = useState(false);
   const [reviewData, setReviewData] = useState({
     SellerRating: 0,
     DeliverRating: 0,
@@ -48,10 +50,12 @@ export default function ReviewForm() {
   };
 
   const handleAddReview = async (formData) => {
+    setLoading(true);
     try {
       const response = await addReview(formData);
       if (response.status === 200) {
         console.log('Review added successfully!', response);
+        setLoading(false);
         navigate('/buyers/my-reviews');
       }
     } catch (error) {
@@ -144,13 +148,14 @@ export default function ReviewForm() {
       <div className="bg-white text-center my-2 rounded-lg pt-6 pb-4">
         <button
           type="submit"
-          className="bg-[#44BD32] px-28 rounded-lg h-9 text-white"
+          className="bg-[#44BD32] px-28 rounded-lg h-9 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+          disabled={loading}
           onClick={(e) => {
             e.preventDefault();
             addFormData();
           }}
         >
-          Submit
+          {loading ? "Processing..." : "Submit"}
         </button>
       </div>
     </div>

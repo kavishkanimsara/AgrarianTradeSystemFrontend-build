@@ -5,6 +5,7 @@ import {
 import { FaLocationDot } from "react-icons/fa6";
 import { FaWeight } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { getReviewsForProduct } from '@/services/reviewServices';
 const ProductsCard = (props) => {
   const [reviews, setReviews] = useState(0);
   const id = props.productID;
@@ -29,14 +30,11 @@ const ProductsCard = (props) => {
           </div>
           {/* card body */}
           <div className='px-4 py-4'>
-            <div className="mb-3 flex items-center justify-between">
-              {/* <Rating value={4} readonly  /> */}
-              {/* <div> */}
-              {/* <p className=' text-xs text-gray-700'>Reviews ({reviews})</p>
-              </div> */}
-            </div>
-            <div className=' my-3'>
+            <div className=' mb-0'>
               <h1 className='text-lg font-semibold text-gray-800'>{props.productTitle}</h1>
+            </div>
+            <div className="mb-2 flex items-center justify-start">
+              <p className=' text-xs text-gray-700'>Reviews ({reviews})</p>
             </div>
             <div className='flex justify-between text-gray-800'>
               <p className='flex items-center gap-2 text-sm'><FaWeight />{props.minimumQuantity}kg - {props.availableStock}kg</p>

@@ -35,7 +35,7 @@ function Icon() {
 }
 const ProductDetails = () => {
   const [product, setProduct] = useState([]);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [destination, setDestination] = useState('');
   const [open, setOpen] = useState(false);
@@ -64,6 +64,7 @@ const ProductDetails = () => {
         setCount(data.length)
         console.log(productData)
         setProduct(productData);
+        setSelectedQuantity(productData.minimumQuantity);
       } catch (error) {
         console.error('Error fetching product details:', error);
       }
@@ -76,6 +77,7 @@ const ProductDetails = () => {
       const token = sessionStorage.getItem('jwtToken');
       if (!token) {
         console.error('Token not found in sessionStorage.');
+        navigate('/login');
         return;
       }
       let decodedData;
@@ -84,6 +86,7 @@ const ProductDetails = () => {
         console.log('Decoded Data:', decodedData);
       } catch (error) {
         console.error('Failed to decode token:', error);
+        navigate('/login');
         return;
       }
       if (decodedData.role === 'User') {
