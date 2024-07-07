@@ -1,3 +1,4 @@
+
 "use client";
 import { useEffect, useState } from "react";
 import React from "react";
@@ -149,7 +150,7 @@ export default function Tab({ defaultTab }) {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((values) => {
+              {filteredData.map((values, index) => {
                 const {
                   orderID,
                   productTitle,
@@ -161,7 +162,7 @@ export default function Tab({ defaultTab }) {
                 } = values; //destructuring
                 return (
                   <tr
-                    key={orderID}
+                    key={index}
                     onClick={() => handleRowClick(orderID)}
                     onMouseEnter={() => setSelectedRow(orderID)}
                     onMouseLeave={() => setSelectedRow(null)}

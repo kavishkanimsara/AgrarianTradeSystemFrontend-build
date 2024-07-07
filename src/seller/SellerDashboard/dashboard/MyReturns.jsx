@@ -5,14 +5,25 @@ import ReturnCard from './components/reviews/components/SellerReturnCard';
 import SellerReturnCard from './components/reviews/components/SellerReturnCard';
 import { getReturnsForBuyer, getReturnsForfarmer } from '@/services/returnServices';
 import { BUYER_ID, FARMER_ID } from '@/usersID';
+import { jwtDecode } from 'jwt-decode';
 
 export function MyReturns() {
-  const farmerId = FARMER_ID;
+
   const navigate = useNavigate();
 
   const [returns, setReturns] = useState([]);
+  useEffect(() => {
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      const decodedData = jwtDecode(token);
+      console.log("DecodedData: ", decodedData);
+      fetchReturns(decodedData.email);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  }, []);
 
-  const fetchReturns = async () => {
+  const fetchReturns = async (farmerId) => {
     const data = await getReturnsForfarmer(farmerId);
     console.log(data)
     // Use a Map to store the first occurrence of each orderID
@@ -30,9 +41,6 @@ export function MyReturns() {
     setReturns(filteredOrders);
   }
 
-  useEffect(() => {
-    fetchReturns();
-  }, [])
 
   return (
     <>
