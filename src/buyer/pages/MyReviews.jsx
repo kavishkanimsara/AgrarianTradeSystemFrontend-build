@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { getReviewsForFarmer } from '@/services/reviewServices';
 import { FARMER_ID } from '@/usersID';
 import SellerReviewCard from '@/seller/SellerDashboard/dashboard/components/reviews/components/SellerReviewCard';
-
-
-
 export function MyReviews() {
   const farmerId = FARMER_ID;
   const navigate = useNavigate();
@@ -20,7 +17,6 @@ export function MyReviews() {
   useEffect(() => {
     fetchReviews()
   }, [])
-
   return (
     <>
       <div className='bg-white rounded-lg px-8 py-2'>
