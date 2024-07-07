@@ -75,11 +75,11 @@ const OrderOverview = ({ orderDetails, type }) => {
             )}
 
             {type === "Farmer" && (
-              <div className="group basis-1/4 sm:p-6 p-3 bg-gray-200 border  shadow-md  rounded-lg  hover:bg-primary  transition duration-300">
-                <div className="mb-2 sm:text-2xl text-xl font-bold  text-primary  text-center group-hover:text-white">
+              <div className="group basis-1/4 sm:p-6 p-3 bg-gray-200 border  shadow-md  rounded-lg  transition duration-300">
+                <div className="mb-2 sm:text-2xl text-xl font-bold  text-primary  text-center ">
                   Courier Details
                 </div>
-                <div className=" text-gray-600  sm:space-y-3 space-y-2 p-1 ml-3 text-center group-hover:text-gray-800">
+                <div className=" text-gray-600  sm:space-y-3 space-y-2 p-1 ml-3 text-center ">
                   <div>
                     {orderDetails.courierFName} {orderDetails.courierLName}
                   </div>
