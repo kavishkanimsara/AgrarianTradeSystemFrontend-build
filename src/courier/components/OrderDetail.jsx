@@ -67,7 +67,7 @@ const OrderDetail = () => {
         id: 0,
         from: courierID,
         to: data.farmerID,
-        message: "Your Orders has been accepted",
+        message: `Your Order ${data.orderID} has been accepted`,
         isSeen: false,
       };
       const response = await sendNotification(notificationData);
@@ -110,7 +110,7 @@ const OrderDetail = () => {
         id: 0,
         from: courierID,
         to: data.farmerID,
-        message: "Your Orders has been rejected",
+        message: `Your Order ${data.orderID} has been rejected`,
         isSeen: false,
       };
 
