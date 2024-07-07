@@ -144,7 +144,6 @@ const ProductDetails = () => {
         };
 
         try {
-          // Attempt to add the product to the cart
           await addToCartProducts(cart);
           setOpen(true); // Open the success message or modal
           console.log('Product added to cart successfully.');
@@ -162,30 +161,6 @@ const ProductDetails = () => {
       console.error('An unexpected error occurred:', error);
     }
   }
-
-
-  // const token = sessionStorage.getItem('jwtToken');
-  // const decodedData = jwtDecode(token);
-  // if (decodedData.Role === 'User') {
-  //   setLoading(true);
-  //   var cart = {
-  //     buyerId: buyerID,
-  //     productId: productId,
-  //     quantity: selectedQuantity
-  //   }
-  //   try {
-  //     await addToCartProducts(cart);
-  //     setOpen(true);
-  //   } catch (error) {
-  //     console.error('Error adding items to the cart:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-  // else{
-  //   <Navigate to={"/login"}/>
-  // }
-
 
   const handleQuantityChange = (newQuantity) => {
     setSelectedQuantity(newQuantity);

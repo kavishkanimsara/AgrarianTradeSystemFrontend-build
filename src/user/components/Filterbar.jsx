@@ -25,14 +25,16 @@ const Filterbar = ({ items, applyFilters,handleSelectType ,handlSelectCategory }
   // Handle product type change
   const handleProductTypeChange = (event) => {
     setSelectedProductType(event.target.value);
-    setSelectedCategory('');  // Reset category when changing product type
+    setSelectedCategory(''); 
     handleSelectType(event.target.value);
+    handlSelectCategory('');
   };
 
   // Handle category change
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
     handlSelectCategory(event.target.value);
+    
   };
 
   return (

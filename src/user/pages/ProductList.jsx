@@ -9,6 +9,7 @@ import SortBar from '../components/SortBar'
 import LoadingProducts from '@/courier/components/LoadingProducts'
 import { getAllProductsPage, getSortedProducts } from '@/services/productServices'
 import { PaginationBar } from '../components/PaginationBar';
+import { set } from 'date-fns';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -26,7 +27,7 @@ const ProductList = () => {
   const[selectedProductType,setSelectedProductType] = useState('');
   const[selectedCategory,setSelectedCategory] = useState('');
 
-  const fetchProducts = async (pageNum) => {
+  const fetchProducts = async (pageNum ,sortedProducts) => {
     try {
       let data;
       if (sortedProducts === 'asc' || sortedProducts === 'desc') {
@@ -36,15 +37,7 @@ const ProductList = () => {
         setTotalPages(response.totalPages);
         data = response.items;
       }
-      // Apply filters to the fetched data
-      if (selectedProductType) {
-        data = data.filter(product => product.productType === selectedProductType);
-      }
-      if (selectedCategory) {
-        data = data.filter(product => product.category === selectedCategory);
-      }
       setProducts(data);
-      console.log(data)
       setFilteredProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -52,7 +45,7 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    fetchProducts(page);
+    fetchProducts(page , sortedProducts);
   }, [sortedProducts, page]);
 
   useEffect(() => {
@@ -85,8 +78,10 @@ const ProductList = () => {
   const handleSortedData = (sortedData) => {
     if (sortedData === 'asc' || sortedData === 'desc') {
       setSortedProducts(sortedData);
+      fetchProducts(page , sortedData);
     } else {
       setSortedProducts(null);
+      fetchProducts(page, sortedData);
     }
   };
 
@@ -94,6 +89,7 @@ const ProductList = () => {
   const handleSelectType = (type) => {
     setSelectedProductType(type);
     console.log('Selected Product Type:', type);
+    console.log('Selected Category:', selectedCategory);
   };
   const handlSelectCategory = (category) => {
     setSelectedCategory(category);

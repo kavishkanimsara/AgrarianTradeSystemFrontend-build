@@ -18,7 +18,7 @@ export default function BuyerOrderDetails() {
     const fetchOrders = async () => {
       try {
         const orderData = await getBuyerOrderByID(orderID);
-        console.log(orderData);
+       // console.log(orderData);
         setOrderDetails(orderData);
       } catch (error) {
         console.error("Error fetching order details:", error);
@@ -35,33 +35,41 @@ export default function BuyerOrderDetails() {
   useEffect(() => {
     // Set active step based on order status
     switch (orderDetails.orderStatus) {
-      case "Ready to Pickup":
+      case "ready to pickup":
         setActiveStep(0);
         break;
-      case "Picked Up":
+      case "picked up":
         setActiveStep(1);
         break;
-      case "Delivered":
+      case "review":
+        setActiveStep(2);
+        break;
+      case "return":
         setActiveStep(2);
         break;
       default:
-        setActiveStep(0);
+        setActiveStep();
     }
   }, [orderDetails.orderStatus]);
+
+  const displayOrderStatus = () => {
+    if (orderDetails.orderStatus === "review" || orderDetails.orderStatus === "return") {
+      return "Delivered";
+    }
+    return orderDetails.orderStatus;
+  };
 
   return (
     <div className="sm:mt-10 mt-4 text-custom_gray font-popins">
       <div className="text-center mb-7">
         Your Order({orderDetails.orderID}) has been{" "}
-        <span className="text-primary">{orderDetails.orderStatus}</span>
+        <span className="text-primary">{displayOrderStatus()}</span>
       </div>
 
-      <div className="w-8/12 mx-auto px-24 py-4 mb-8">
+      <div className="w-full md:w-8/12 mx-auto px-8 py-4 mb-8">
         <Stepper activeStep={activeStep}>
-          <Step
-            className={` ${activeStep === 0 ? "border-8 border-red-200 " : ""}`}
-          >
-            <InboxArrowDownIcon className="h-5 w-5" />
+          <Step>
+            <InboxArrowDownIcon className="h-5 w-5 " />
             <Typography
               variant="h6"
               color={activeStep === 0 ? "green" : "gray"}
@@ -70,10 +78,8 @@ export default function BuyerOrderDetails() {
               Ready to Pickup
             </Typography>
           </Step>
-          <Step
-            className={` ${activeStep === 1 ? "border-8 border-red-200" : ""}`}
-          >
-            <TruckIcon className="h-5 w-5" />
+          <Step>
+            <TruckIcon className="h-5 w-5 " />
             <Typography
               variant="h6"
               color={activeStep === 1 ? "green" : "gray"}
@@ -82,9 +88,7 @@ export default function BuyerOrderDetails() {
               Picked Up
             </Typography>
           </Step>
-          <Step
-            className={` ${activeStep === 2 ? "border-8 border-red-200" : ""}`}
-          >
+          <Step>
             <CheckIcon className="h-5 w-5 " />
             <Typography
               variant="h6"
@@ -97,90 +101,77 @@ export default function BuyerOrderDetails() {
         </Stepper>
       </div>
 
-      <div className="flex justify-center">
-        <div className="relative w-9/12 h-full text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border mt-10 hidden sm:block">
+      <div className="flex justify-center mt-16">
+        <div className="relative w-full sm:w-9/12 h-full text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border">
           <table className="w-full text-left table-auto">
             <thead>
-              <tr>
-                <div className="pl-8 grid grid-cols-5 gap-x-6 gap-4 bg-green-500 text-gray-100 text-md">
-                  <th className="pl-6 col-span-1 pt-8 pb-6 font-bold">
-                    <p className="block font-sans text-sm antialiased font-medium leading-none">
-                      Product
-                    </p>
-                  </th>
-                  <th className="col-span-1 pt-8 pb-6 font-bold">
-                    <p className="block font-sans text-sm antialiased font-medium leading-none">
-                      Order Placed
-                    </p>
-                  </th>
-                  <th className="col-span-1 pt-8 pb-6 font-bold">
-                    <p className="block font-sans text-sm antialiased font-medium leading-none">
-                      Delivery Date
-                    </p>
-                  </th>
-                  <th className="col-span-1 pt-8 pb-6 font-bold">
-                    <p className="block font-sans text-sm antialiased font-medium leading-none">
-                      Quantity
-                    </p>
-                  </th>
-                  <th className="col-span-1 pt-8 pb-6 font-bold">
-                    <p className="block font-sans text-sm antialiased font-medium leading-none">
-                      Status
-                    </p>
-                  </th>
-                </div>
+              <tr className="bg-green-500 text-gray-100 text-md">
+                <th className="pl-8 py-4 font-bold text-left">
+                  <p className="font-sans text-sm antialiased font-medium leading-none">
+                    Product
+                  </p>
+                </th>
+                <th className="py-4 font-bold text-left">
+                  <p className="font-sans text-sm antialiased font-medium leading-none">
+                    Order Placed
+                  </p>
+                </th>
+                <th className="py-4 font-bold text-left">
+                  <p className="font-sans text-sm antialiased font-medium leading-none">
+                    Delivery Date
+                  </p>
+                </th>
+                <th className="py-4 font-bold text-left">
+                  <p className="font-sans text-sm antialiased font-medium leading-none">
+                    Quantity
+                  </p>
+                </th>
+                <th className="py-4 font-bold text-left">
+                  <p className="font-sans text-sm antialiased font-medium leading-none">
+                    Status
+                  </p>
+                </th>
               </tr>
             </thead>
-
             <tbody>
-              <tr>
-                <div className="pl-8 pr-8 grid grid-cols-5 gap-x-6 gap-4 border-b border-blue-gray-50">
-                  <td class="p-3 col-span-1 ">
-                    <div class="flex space-x-5  ">
-                      <Avatar
-                        src={
-                          "https://syntecblobstorage.blob.core.windows.net/products/" +
-                          orderDetails.productImageUrl
-                        }
-                        size="sm"
-                      />
-                      <p class="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1">
-                        {orderDetails.productTitle}
-                      </p>
-                    </div>
-                  </td>
-
-                  <td className="p-3 col-span-1">
-                    <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1">
-                      {formatDate(orderDetails.orderedDate)}
-                    </p>
-                  </td>
-
-                  <td className="p-3 col-span-1">
-                    <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1">
-                      {formatDate(orderDetails.deliveryDate)}
-                    </p>
-                  </td>
-
-                  <td className="p-3 col-span-1">
-                    <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 pl-3">
-                      {orderDetails.totalQuantity}Kg
-                    </p>
-                  </td>
-
-                  <td className="p-3 col-span-1">
-                    <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 pl-4">
-                      Processing
-                    </p>
-                  </td>
-                </div>
+              <tr className="border-b border-blue-gray-50">
+                <td className="pl-8 py-4 flex items-center space-x-5">
+                  <img
+                    src={`https://syntecblobstorage.blob.core.windows.net/products/${orderDetails.productImageUrl}`}
+                    alt={orderDetails.productTitle}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <p className="font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 hidden sm:block">
+                    {orderDetails.productTitle}
+                  </p>
+                </td>
+                <td className="py-4">
+                  <p className="font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                    {formatDate(orderDetails.orderedDate)}
+                  </p>
+                </td>
+                <td className="py-4">
+                  <p className="font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                    {formatDate(orderDetails.deliveryDate)}
+                  </p>
+                </td>
+                <td className="py-4">
+                  <p className="font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                    {orderDetails.totalQuantity}Kg
+                  </p>
+                </td>
+                <td className="py-4">
+                  <p className="font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                    Processing
+                  </p>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <div className="flex justify-end mr-36 mt-3 mb-3 text-sm">
+      <div className="flex sm:justify-end sm:mr-36 mt-3 mb-3 text-sm justify-center mr-12 ml-12">
         <div className="w-96 border rounded-xl shadow-md p-4">
           <div className="flex justify-between mb-2">
             <p className="font-bold">Courier Charge:</p>
@@ -194,22 +185,30 @@ export default function BuyerOrderDetails() {
         </div>
       </div>
 
-      <div className="flex justify-center text-sm">
+      <div className="flex justify-center text-sm text-gray-700">
         <div className="relative w-9/12 h-full border rounded-xl shadow-md p-4">
-          <div className="flex justify-between ml-16 mr-16">
+          <div className="flex justify-between sm:ml-16 sm:mr-16 ">
             <div>
-              <p className="font-bold">Seller Details</p> <br />
+              <p className="font-bold text-primary">Seller Details</p> <br />
               {orderDetails.farmerFName} {orderDetails.farmerLName} <br />
               <br />
               <div className="italic sm:text-sm text-xs">
                 {orderDetails.farmerAddL1} <br />
                 {orderDetails.farmerAddL2} <br />
-                {orderDetails.farmerAddL3}
+                {orderDetails.farmerAddL3} <br />
+                {orderDetails.farmerPhoneNumber}
               </div>
             </div>
             <div>
-              <p className="font-bold">Courier Details</p> <br />
+              <p className="font-bold text-primary">Courier Details</p> <br />
               {orderDetails.courierFName} {orderDetails.courierLName} <br />
+              <br />
+              <div className="italic sm:text-sm text-xs">
+                {orderDetails.courierAddL1} <br />
+                {orderDetails.courierAddL2} <br />
+                {orderDetails.courierAddL3} <br />
+                {orderDetails.courierPhoneNumber}
+              </div>
             </div>
           </div>
         </div>

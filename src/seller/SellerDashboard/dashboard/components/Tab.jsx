@@ -1,6 +1,9 @@
+
+"use client";
 import { useEffect, useState } from "react";
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Avatar } from "@material-tailwind/react";
 import { getAllFarmerOrders } from "@/services/orderServices";
 import { jwtDecode } from "jwt-decode";
@@ -15,9 +18,9 @@ export default function Tab({ defaultTab }) {
 
   // Fetch data on component mount
   useEffect(() => {
-    const token = sessionStorage.getItem('jwtToken');
-        const decodedData = jwtDecode(token);
-        const sellerID = decodedData.email;
+    const token = sessionStorage.getItem("jwtToken");
+    const decodedData = jwtDecode(token);
+    const sellerID = decodedData.email;
     const fetchOrderDetails = async () => {
       try {
         const details = await getAllFarmerOrders(sellerID);
@@ -59,6 +62,9 @@ export default function Tab({ defaultTab }) {
           (item) => item.orderStatus.toLowerCase() === statusItem.toLowerCase()
         );
       }
+
+      result.sort((a, b) => new Date(b.orderedDate) - new Date(a.orderedDate));
+
       setFilteredData(result);
     };
     filterResult(tab);
@@ -122,7 +128,7 @@ export default function Tab({ defaultTab }) {
         </div>
       </div>
       <div>
-        <div className=" flex-col justify-center text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border mt-8">
+        <div className=" flex-col justify-center text-custom_gray bg-white shadow-md overflow-auto rounded-xl bg-clip-border mt-8 hidden sm:block">
           <table className="w-full text-left table-auto min-w-max">
             <thead>
               <tr class="border-b border-primary">
@@ -144,7 +150,7 @@ export default function Tab({ defaultTab }) {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((values) => {
+              {filteredData.map((values, index) => {
                 const {
                   orderID,
                   productTitle,
@@ -156,7 +162,7 @@ export default function Tab({ defaultTab }) {
                 } = values; //destructuring
                 return (
                   <tr
-                    key={orderID}
+                    key={index}
                     onClick={() => handleRowClick(orderID)}
                     onMouseEnter={() => setSelectedRow(orderID)}
                     onMouseLeave={() => setSelectedRow(null)}
@@ -204,18 +210,18 @@ export default function Tab({ defaultTab }) {
                     </td>
                     <td className="p-3 w-24 text-center align-middle">
                       {orderStatus.toLowerCase() === "ready to pickup" && (
-                        <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased  leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Ready to Pickup
                         </p>
                       )}
                       {orderStatus.toLowerCase() === "picked up" && (
-                        <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased  leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Picked up
                         </p>
                       )}
                       {(orderStatus.toLowerCase() === "review" ||
                         orderStatus.toLowerCase() === "return") && (
-                        <p className=" bg-primary rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        <p className=" bg-primary rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                           Delivered
                         </p>
                       )}
@@ -230,59 +236,58 @@ export default function Tab({ defaultTab }) {
         <div className="sm:hidden">
           {filteredData.map((values) => {
             const {
-              orderId,
-              product,
+              orderID,
+              productTitle,
               orderedDate,
               totalQuantity,
-              photoName,
+              productImageUrl,
               totalPrice,
-              status,
+              orderStatus,
             } = values; //destructuring
             return (
-              <div
-                key={orderId}
-                className="group bg-gray-200 border hover:border hover:border-primary hover:bg-green-50 transition duration-300 ease-out  p-4  rounded-lg shadow mt-8  "
-              >
-                <Link to={`/dashboard/my-orders/${orderId}`}>
-                  <img
-                    src={photoName}
-                    alt={product}
-                    className="w-24 h-14 pl-8"
+              <div className="group bg-gray-200 border hover:border hover:border-primary hover:bg-green-50 transition duration-300 ease-out  p-4  rounded-lg shadow mt-8  ">
+                <Link to={`/dashboard/my-orders/${orderID}`}>
+                  <Avatar
+                    src={
+                      "https://syntecblobstorage.blob.core.windows.net/products/" +
+                      productImageUrl
+                    }
+                    size="xl"
                   />
-
                   <div className="grid grid-cols-2 gap-x-10 mt-2 ">
                     <div className="col-span-1 pl-3">
                       <div className="text-md pb-2 font-medium text-gray-700 ">
-                        {product} - {totalQuantity}Kg
+                        {productTitle} - {totalQuantity}Kg
                       </div>
                       <div className="text-sm  text-primary ">
                         Rs.{totalPrice}
                       </div>
                       <div className="text-sm italic text-gray-400">
-                        {orderedDate}
+                        {formatDate(orderedDate)}
                       </div>
                     </div>
                     <div className="col-span-1 text-gray-600 flex flex-col space-y-3  group-hover:text-custom_gray">
                       <div className="">
-                        {status === "Ready to pickup" && (
-                          <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased  leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        {orderStatus === "ready to pickup" && (
+                          <p className=" bg-red-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                             Ready to pickup
                           </p>
                         )}
-                        {status === "Picked up" && (
-                          <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased  leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        {orderStatus === "picked up" && (
+                          <p className=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                             Picked up
                           </p>
                         )}
-                        {(status === "review" || status === "return") && (
-                          <p className=" bg-primary rounded-lg block font-sans text-sm antialiased leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
+                        {(orderStatus === "review" ||
+                          orderStatus === "return") && (
+                          <p className=" bg-primary rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                             Delivered
                           </p>
                         )}
                       </div>
                       <div className="text-md font-semibold pl-3">
                         {" "}
-                        {orderId}
+                        {orderID}
                       </div>
                     </div>
                   </div>
