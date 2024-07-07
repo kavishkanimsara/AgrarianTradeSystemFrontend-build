@@ -1,4 +1,3 @@
-// src/ReviewForm.js
 import React, { useEffect, useState } from 'react';
 import { Rating } from "@material-tailwind/react";
 import FileSelect from './FileSelect';
@@ -17,6 +16,8 @@ export default function ReviewForm() {
     Comment: "",
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [charCount, setCharCount] = useState(0);
+  const charLimit = 250;
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -56,6 +57,14 @@ export default function ReviewForm() {
       }
     } catch (error) {
       console.error('Error adding review:', error);
+    }
+  };
+
+  const handleCommentChange = (e) => {
+    const { value } = e.target;
+    if (value.length <= charLimit) {
+      setReviewData((prev) => ({ ...prev, Comment: value }));
+      setCharCount(value.length);
     }
   };
 
@@ -126,17 +135,16 @@ export default function ReviewForm() {
         <div className="flex mx-6 py-5 pt-5">
           <h1>Add Written Review</h1>
           <div className="ml-auto opacity-60">
-            <h1>0/500</h1>
+            <h1>{charCount}/{charLimit}</h1>
           </div>
         </div>
         <div className="text-center">
-          <input
-            type="text"
+          <textarea
             placeholder="How’s the Quality of the product?"
             className="w-[600px] h-12 bg-[#F7FFF1] rounded-lg text-center"
-            onChange={(e) =>
-              setReviewData((prev) => ({ ...prev, Comment: e.target.value }))
-            }
+            onChange={handleCommentChange}
+            value={reviewData.Comment}
+            maxLength={charLimit}
           />
         </div>
       </div>

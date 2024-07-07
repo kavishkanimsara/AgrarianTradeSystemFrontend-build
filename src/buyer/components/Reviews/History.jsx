@@ -74,8 +74,8 @@ const History = () => {
                 alt="" className='w-[160px] h-[120px]' />
 
               <div className='w-full px-3'>
-                <h1 className='font-semibold text-gray-800 text-lg my-3'>{review.productTitle}</h1>
-                <p className='text-blue-gray-500'>{review.comment}</p>
+                <h1 className='font-semibold text-gray-800 text-lg my-11'>{review.productTitle}</h1>
+                <p className='text-blue-gray-500 border-x-2'>{review.comment}</p>
               </div>
             </div>
 
