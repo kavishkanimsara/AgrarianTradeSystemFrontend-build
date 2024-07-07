@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import SellerReviewCard from './components/reviews/components/SellerReviewCard';
 import { getReviewsForFarmer } from '@/services/reviewServices';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export function MyReviews() {
   const navigate = useNavigate();
@@ -15,20 +15,17 @@ export function MyReviews() {
       const decodedData = jwtDecode(token);
       console.log("DecodedData: ", decodedData);
       setSellerID(decodedData.email);
+      fetchReviews(decodedData.email);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
   }, []);
 
-  const fetchReviews = async () => {
-
+  const fetchReviews = async (sellerID) => {
     const data = await getReviewsForFarmer(sellerID);
     setReviews(data);
   }
 
-  useEffect(() => {
-    fetchReviews()
-  }, [])
 
   return (
     <>
