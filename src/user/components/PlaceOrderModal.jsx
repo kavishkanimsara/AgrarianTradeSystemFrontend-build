@@ -11,11 +11,13 @@ import {
 } from "@material-tailwind/react";
 import { createNewOrder } from '@/services/orderServices';
 import { jwtDecode } from 'jwt-decode';
+import { set } from 'date-fns';
 const PlaceOrderModal = ({ open, setOpen, product, selectedQuantity, deliveryFee, destination, setSuccessOrder }) => {
     const [buyerID, setBuyerID] = useState('');
     const addL1Ref = useRef(null);
     const addL2Ref = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState({});
     useEffect(() => {
         try {
             const token = sessionStorage.getItem('jwtToken');
@@ -50,6 +52,19 @@ const PlaceOrderModal = ({ open, setOpen, product, selectedQuantity, deliveryFee
         }
     };
     const handleSubmit = () => {
+        const error={};
+        if (!addL1Ref.current.value) {
+            error.addL1 = "Address Line 1 is required";
+          
+        }
+        if (!addL2Ref.current.value) {
+            error.addL2 = "Address Line 2 is required";
+         
+        }
+        if (Object.keys(error).length > 0) {
+            setError(error);
+            return;
+        }
         const orderedDate = new Date();
         const deliveryDateObject = new Date(orderedDate.getTime() + 3 * 24 * 60 * 60 * 1000);
         const deliveryDate = deliveryDateObject.toISOString()
@@ -87,9 +102,11 @@ const PlaceOrderModal = ({ open, setOpen, product, selectedQuantity, deliveryFee
                                 <h1 className='text-gray-600 font-semibold  text-lg my-3'>Delivery Address :</h1>
                                 <div className='my-3'>
                                     <input placeholder="Address Line 1" ref={addL1Ref} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ' />
+                                    {error && <p className='text-red-500 text-sm'>{error.addL1}</p>}
                                 </div>
                                 <div className='my-2'>
                                     <input placeholder="Address Line 2" ref={addL2Ref} className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' />
+                                    {error && <p className='text-red-500 text-sm'>{error.addL2}</p>}
                                 </div>
                                 <div className='my-2'>
                                     <p>{destination}.</p>

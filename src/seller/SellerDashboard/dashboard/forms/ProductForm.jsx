@@ -100,7 +100,6 @@ const ProductForm = ({ onSubmitData, productData, isUpdate ,handleupdateImage })
       }
   }
     setErrors(errors);
-
     return Object.keys(errors).length === 0;
   };
 

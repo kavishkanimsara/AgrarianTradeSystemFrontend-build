@@ -27,17 +27,10 @@ const ProductList = () => {
   const[selectedProductType,setSelectedProductType] = useState('');
   const[selectedCategory,setSelectedCategory] = useState('');
 
-  const fetchProducts = async (pageNum) => {
+  const fetchProducts = async (pageNum ,sortedProducts) => {
     try {
       let data;
       if (sortedProducts === 'asc' || sortedProducts === 'desc') {
-              // Apply filters to the fetched data
-      if (selectedProductType) {
-        data = data.filter(product => product.productType === selectedProductType);
-      }
-      if (selectedCategory) {
-        data = data.filter(product => product.category === selectedCategory);
-      }
         data = await getSortedProducts(sortedProducts);
       } else {
         let response = await getAllProductsPage(pageNum, 10);
@@ -52,7 +45,7 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    fetchProducts(page);
+    fetchProducts(page , sortedProducts);
   }, [sortedProducts, page]);
 
   useEffect(() => {
@@ -85,10 +78,10 @@ const ProductList = () => {
   const handleSortedData = (sortedData) => {
     if (sortedData === 'asc' || sortedData === 'desc') {
       setSortedProducts(sortedData);
-      fetchProducts(page);
+      fetchProducts(page , sortedData);
     } else {
       setSortedProducts(null);
-      fetchProducts(page);
+      fetchProducts(page, sortedData);
     }
   };
 
