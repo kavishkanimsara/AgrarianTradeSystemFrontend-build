@@ -61,7 +61,7 @@ export const editReview = async (formData, reviewId) => {
     try {
         const response = await axiosInstance.put('/Review/edit-review/' + reviewId, formData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
             },
         });
         return response;

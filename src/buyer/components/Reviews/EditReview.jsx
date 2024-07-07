@@ -47,11 +47,9 @@ export default function EditReview() {
         formData.append("ProductRating", reviewData.ProductRating);
         formData.append("Comment", reviewData.Comment);
 
-        selectedFiles.forEach((file, index) => {
-            if (file instanceof File) {
-                formData.append(`file${index}`, file);
-            }
-        });
+        if (selectedFiles.length > 0) {
+            formData.append("file", selectedFiles[0]);
+        }
 
         handleAddReview(formData);
     };
@@ -166,3 +164,4 @@ export default function EditReview() {
         </>
     );
 }
+

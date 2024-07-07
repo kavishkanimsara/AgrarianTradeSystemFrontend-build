@@ -50,7 +50,7 @@ export const SingleReview = (props) => {
           <p className='text-blue-gray-400'>{props.date}</p>
         </div>
         <div className='ml-8'>
-          <Rating value={props.rating} />
+          <Rating value={props.rating} readonly />
         </div>
         <p className='ml-96 text-blue-gray-800'>{duration} year(s) ago...</p>
       </div>

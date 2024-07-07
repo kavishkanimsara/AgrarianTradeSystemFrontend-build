@@ -10,7 +10,7 @@ import { deleteProduct, getProductsBySellerIDPage } from '@/services/productServ
 import { jwtDecode } from 'jwt-decode';
 const TABLE_HEAD = ["Product", "Product Number", "Date Created", "Unit Price", "Stock", "Minimum Order", "", ""];
 
-const MyProductsTable = () => {
+const   MyProductsTable = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);

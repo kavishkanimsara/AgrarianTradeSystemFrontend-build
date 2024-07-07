@@ -65,7 +65,7 @@ const Review = ({ id }) => {
             <div className='bg-orange-400'>
               {rating} Top Rated
             </div>
-            <Rating value={rating} />
+            <Rating value={rating} readonly/>
             <p>{count} Ratings</p>
           </div>
           <div>
