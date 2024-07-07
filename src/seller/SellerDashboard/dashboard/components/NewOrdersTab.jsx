@@ -7,7 +7,7 @@ import { getAllFarmerOrders } from '@/services/orderServices';
 import { jwtDecode } from 'jwt-decode';
 
 export default function NewOrdersTab() {
-  const [data, setData] = useState([]); // State to store fetched data
+  const [data, setData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const navigate = useNavigate();
 
@@ -24,8 +24,11 @@ export default function NewOrdersTab() {
     }
   };
 
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/select-courier/${id}`);
+  const handleRowClick = (id, totalPrice) => {
+    const token = sessionStorage.getItem('jwtToken');
+    const decodedData = jwtDecode(token);
+    const sellerID = decodedData.email;
+    navigate(`/dashboard/select-courier/${id}`, { state: { totalPrice, sellerID } });
   };
 
   useEffect(() => {
@@ -40,6 +43,7 @@ export default function NewOrdersTab() {
           filterOptions.includes(order.orderStatus)
         );
         setData(filteredOrders);
+        console.log(orders);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
@@ -69,8 +73,8 @@ export default function NewOrdersTab() {
                 <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Order reference</th>
                 <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Order Placed</th>
                 <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Quantity (Kg)</th>
-                <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Total</th>
-                <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Delivery</th>
+                <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Total (Rs)</th>
+                <th className="p-4 pt-8 pb-6 font-bold w-24 text-center align-middle">Order Status</th>
               </tr>
             </thead>
             <tbody>
@@ -82,16 +86,20 @@ export default function NewOrdersTab() {
                 return (
                   <tr
                     key={orderID}
-                    onClick={() => handleRowClick(orderID)}
+                    onClick={() => handleRowClick(orderID, totalPrice)}
                     onMouseEnter={() => setSelectedRow(orderID)}
                     onMouseLeave={() => setSelectedRow(null)}
                     className={selectedRow === orderID ? 'bg-gray-200 cursor-pointer' : 'cursor-pointer'}
                   >
                     {/* Table data cells */}
                     <td className="p-3 w-24 text-center align-middle">
-                      <div className="flex flex-row items-center justify-center">
-                        <img src={'https://syntecblobstorage.blob.core.windows.net/products/' + productImageUrl} alt={productTitle} style={{ borderRadius: "100%", height: "40px", width: "40px", marginRight: "8px" }} />
-                        <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                      <div className="flex items-center justify-start">
+                        <img 
+                          src={'https://syntecblobstorage.blob.core.windows.net/products/' + productImageUrl} 
+                          alt={productTitle} 
+                          style={{ borderRadius: "100%", height: "40px", width: "40px", marginRight: "8px", marginLeft: "15px" }} 
+                        />
+                        <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 text-left">
                           {productTitle}
                         </p>
                       </div>

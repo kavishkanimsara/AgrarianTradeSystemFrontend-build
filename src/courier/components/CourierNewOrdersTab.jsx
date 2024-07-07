@@ -27,8 +27,11 @@ export default function CourierNewOrdersTab() {
     fetchOrders();
   }, []);
 
-  const handleRowClick = (id) => {  
-    navigate(`/couriers/new-orders/${id}`);
+  const handleRowClick = (id) => {
+    const token = sessionStorage.getItem('jwtToken');
+    const decodedData = jwtDecode(token);
+    const courierID = decodedData.email;
+    navigate(`/couriers/new-orders/${id}`, { state: { courierID } });
   };
 
   return (
@@ -42,14 +45,14 @@ export default function CourierNewOrdersTab() {
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Order reference</th>
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Order Placed</th>
                 <th className="p-4 py-5 font-bold w-24 text-center align-middle">Quantity (Kg)</th>
-                <th className="p-4 py-5 font-bold w-24 text-center align-middle">Delivery Fee</th>
+                <th className="p-4 py-5 font-bold w-24 text-center align-middle">Delivery Fee (Rs)</th>
               </tr>
             </thead>
             <tbody>
               {data.map((values) => {
                 const { orderID, productTitle, orderedDate, totalQuantity, productImageUrl, deliveryFee } = values;
                 const dateTimeString = orderedDate;
-                const date = moment(dateTimeString).format("YYYY-MM-DD")
+                const date = moment(dateTimeString).format("YYYY-MM-DD");
                 return (
                   <tr
                     key={orderID}
@@ -59,9 +62,13 @@ export default function CourierNewOrdersTab() {
                     className={selectedRow === orderID ? 'bg-gray-200 cursor-pointer' : 'cursor-pointer'}
                   >
                     <td className="p-3 w-24 text-center align-middle">
-                      <div className="flex flex-row items-center justify-center">
-                        <img src={`https://syntecblobstorage.blob.core.windows.net/products/${productImageUrl}`} alt={productTitle} style={{ borderRadius: '100%', height: '40px', width: '40px', marginRight: '8px' }} />
-                        <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900">
+                      <div className="flex items-center justify-start">
+                        <img 
+                          src={`https://syntecblobstorage.blob.core.windows.net/products/${productImageUrl}`} 
+                          alt={productTitle} 
+                          style={{ borderRadius: '100%', height: '40px', width: '40px', marginRight: '15px', marginLeft: '15px' }} 
+                        />
+                        <p className="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 text-left">
                           {productTitle}
                         </p>
                       </div>
