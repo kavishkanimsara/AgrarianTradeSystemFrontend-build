@@ -18,7 +18,9 @@ export default function CourierNewOrdersTab() {
         const courierID = decodedData.email;
         const orders = await getAllCourierOrders(courierID);
         const pendingOrders = orders.filter(order => order.orderStatus === 'pending');
-        setData(pendingOrders); 
+        // Sort the pending orders by orderedDate in descending order
+        const sortedPendingOrders = pendingOrders.sort((a, b) => new Date(b.orderedDate) - new Date(a.orderedDate));
+        setData(sortedPendingOrders); 
       } catch (error) {
         console.error('Error fetching orders:', error);
       }

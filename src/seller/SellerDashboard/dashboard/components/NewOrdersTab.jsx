@@ -42,7 +42,9 @@ export default function NewOrdersTab() {
         const filteredOrders = orders.filter(order =>
           filterOptions.includes(order.orderStatus)
         );
-        setData(filteredOrders);
+        // Sort the orders
+        const sortedOrders = filteredOrders.sort((a, b) => new Date(b.orderedDate) - new Date(a.orderedDate));
+        setData(sortedOrders);
         console.log(orders);
       } catch (error) {
         console.error('Error fetching orders:', error);
