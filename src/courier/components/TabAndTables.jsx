@@ -57,6 +57,9 @@ export default function TabAndTables({ defaultTab }) {
           (item) => item.orderStatus.toLowerCase() === statusItem.toLowerCase()
         );
       }
+
+      result.sort((a, b) => new Date(b.deliveryDate) - new Date(a.deliveryDate));
+
       setFilteredData(result);
     };
     filterResult(tab);
@@ -134,9 +137,6 @@ export default function TabAndTables({ defaultTab }) {
                   Delivery Date
                 </th>
                 <th className=" py-5 font-bold w-24 text-center align-middle">
-                  Pickup Date
-                </th>
-                <th className=" py-5 font-bold w-24 text-center align-middle">
                   Delivery Fee
                 </th>
               </tr>
@@ -148,7 +148,6 @@ export default function TabAndTables({ defaultTab }) {
                   productTitle,
                   customerAddL3,
                   deliveryDate,
-                  pickupDate,
                   productImageUrl,
                   deliveryFee,
                   orderStatus,
@@ -194,11 +193,6 @@ export default function TabAndTables({ defaultTab }) {
                       </td>
                       <td class="p-3 w-24 text-center align-middle">
                         <p class="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1">
-                          {formatDate(pickupDate)}
-                        </p>
-                      </td>
-                      <td class="p-3 w-24 text-center align-middle">
-                        <p class="block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1">
                           Rs.{deliveryFee}
                         </p>
                       </td>
@@ -240,7 +234,6 @@ export default function TabAndTables({ defaultTab }) {
               productTitle,
               customerAddL3,
               deliveryDate,
-              pickupDate,
               productImageUrl,
               deliveryFee,
               orderStatus,
@@ -256,7 +249,7 @@ export default function TabAndTables({ defaultTab }) {
                             "https://syntecblobstorage.blob.core.windows.net/products/" +
                             productImageUrl
                           }
-                          size="lg"
+                          size="xl"
                         />
                         <div className="pl-5 mt-8">
                           <div className="text-md pb-2 font-medium text-gray-700 ">
@@ -280,12 +273,12 @@ export default function TabAndTables({ defaultTab }) {
                             </div>
                           </div>
                           <div>
-                            {orderStatus === "Ready to pickup" && (
+                            {orderStatus === "ready to pickup" && (
                               <p class=" bg-red-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                                 Ready to Pickup
                               </p>
                             )}
-                            {orderStatus === "Picked up" && (
+                            {orderStatus === "picked up" && (
                               <p class=" bg-indigo-200 rounded-lg block font-sans text-sm antialiased font-light leading-normal text-blue-gray-900 pt-1 h-8 w-28 font-medium text-center">
                                 Picked up
                               </p>
@@ -302,13 +295,6 @@ export default function TabAndTables({ defaultTab }) {
                             <div className="text-md font-semibold">
                               {" "}
                               {formatDate(deliveryDate)}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-sm "> Pickup Date:</div>
-                            <div className="text-md font-semibold">
-                              {" "}
-                              {formatDate(pickupDate)}
                             </div>
                           </div>
                         </div>

@@ -83,6 +83,13 @@ export default function CourierOrderDetails() {
     }
   };
 
+  const displayOrderStatus = () => {
+    if (orderDetails.orderStatus === "review" || orderDetails.orderStatus === "return") {
+      return "Delivered";
+    }
+    return orderDetails.orderStatus;
+  };
+
   return (
     <div>
       <Alert
@@ -104,16 +111,16 @@ export default function CourierOrderDetails() {
       </div>
 
       <p className="text-sm text-red-300 flex justify-center sm:pt-10 pt-6 overline uppercase font-sans  ">
-        The order has been {orderDetails.orderStatus}
+      The order status is : {displayOrderStatus()}
       </p>
       {orderDetails.orderStatus &&
       (orderDetails.orderStatus.toLowerCase() === "ready to pickup" ||
         orderDetails.orderStatus.toLowerCase() === "picked up") && ( // Conditionally render button
-          <div className="flex flex-row sm:space-x-16 space-x-4 justify-center sm:pt-8 pt-6">
-            <div className="bg-gray-200 shadow-md h-10 w-32 rounded-lg flex items-center justify-center font-medium text-gray-800">
+          <div className="flex flex-row sm:space-x-8 space-x-4 justify-center sm:pt-8 pt-6">
+            <div className="rounded-lg flex items-center justify-center font-medium text-primary">
               {orderDetails.orderStatus.toLowerCase() === "ready to pickup"
-                ? "Picked Up"
-                : "Delivered"}
+                ? "Mark as Picked Up,"
+                : "Mark as Delivered,"}
             </div>
             <button
               className="bg-primary text-sm shadow-lg h-10 w-48 rounded-lg flex items-center justify-center font-medium text-white focus:ring-2 focus:ring-primary  focus:text-primary focus:bg-gray-200 transition duration-300 ease-out hover:bg-green-400"

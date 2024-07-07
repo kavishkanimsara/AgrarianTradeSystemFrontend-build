@@ -315,8 +315,15 @@ export function DashboardNavbar() {
                           color="blue-gray"
                           className="flex items-center gap-1 text-xs font-normal opacity-60"
                         >
-                          <ClockIcon className="h-3.5 w-3.5" />{" "}
-                          {new Date(notification.sendAt).toLocaleTimeString()}
+                          <div>
+                            <div className="w-full border-b border-gray-300 my-2"></div>
+                            <div className="flex items-center gap-1">
+                              <ClockIcon className="h-4 w-4 text-gray-500" />
+                              {new Date(
+                                notification.sendAt
+                              ).toLocaleTimeString()}
+                            </div>
+                          </div>
                         </Typography>
                       </div>
                       <RiDeleteBack2Fill
