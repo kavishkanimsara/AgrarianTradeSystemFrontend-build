@@ -48,7 +48,7 @@ export default function BuyerOrderDetails() {
         setActiveStep(2);
         break;
       default:
-        setActiveStep(0);
+        setActiveStep();
     }
   }, [orderDetails.orderStatus]);
 
