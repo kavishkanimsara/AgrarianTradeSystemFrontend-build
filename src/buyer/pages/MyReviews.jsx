@@ -1,47 +1,62 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { getReviewsForFarmer } from '@/services/reviewServices';
-import { FARMER_ID } from '@/usersID';
-import SellerReviewCard from '@/seller/SellerDashboard/dashboard/components/reviews/components/SellerReviewCard';
-export function MyReviews() {
-  const farmerId = FARMER_ID;
-  const navigate = useNavigate();
+import React, { useState, useEffect } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
+import axios from 'axios';
+import { getProductsToReview, getReviewHistory } from '@/services/reviewServices';
+import { jwtDecode } from 'jwt-decode';
 
-  const [reviews, setReviews] = useState([]);
+const MyReviewsPage = () => {
 
-  const fetchReviews = async () => {
-    const data = await getReviewsForFarmer(farmerId);
-    setReviews(data);
+  const [productData, setProductData] = useState([]);
+  const [historyData, setHistoryData] = useState([]);
+  const [buyerID, setBuyerID] = useState('');
+  useEffect(() => {
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      const decodedData = jwtDecode(token);
+      console.log("DecodedData: ", decodedData);
+      setBuyerID(decodedData.email);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  }, []);
+  const fetchProducts = async () => {
+    const productHistory = await getProductsToReview(buyerID);
+    const reviewHistory = await getReviewHistory(buyerID)
+
+    setProductData(productHistory);
+    setHistoryData(reviewHistory);
   }
 
   useEffect(() => {
-    fetchReviews()
-  }, [])
+    if (buyerID) {
+      fetchProducts();
+    }
+  }, [buyerID]);
+
+  const NavLinkStyles = ({ isActive }) => {
+    return {
+      fontWeight: isActive ? 'bold' : 'normal',
+      textDecoration: 'none',
+      backgroundColor: isActive ? 'rgb(102 187 106 / var(--tw-bg-opacity))' : 'transparent',
+      color: isActive ? 'white' : 'black',
+      padding: '3px',
+      borderRadius: '8px',
+    };
+  };
+
   return (
-    <>
-      <div className='bg-white rounded-lg px-8 py-2'>
-        <h1 className='text-[#00000082]'> View Reviws </h1>
-      </div>
-
-      {reviews && reviews.map((item, index) => (
-        <SellerReviewCard
-          key={index}
-          id={item.orderID}
-          productId={item.productID}
-          type={item.productType}
-          iType={item.productTitle}
-          Button={"View"}
-          img={item.productImageUrl}
-          description={item.productDescription}
-          stock={item.availableStock}
-          pDate={item.orderedDate?.split("T")[0]}
-          quantity={item.totalQuantity}
-        />
-      ))}
-    </>
-
-
+    <div>
+      <nav className='flex gap-6 bg-white py-1 px-16 rounded-lg'>
+        <NavLink to='to-review' style={NavLinkStyles}   >
+          To Review ({productData.length})
+        </NavLink>
+        <NavLink to='history' style={NavLinkStyles}>
+          History ({historyData.length})
+        </NavLink>
+      </nav>
+      <Outlet />
+    </div>
   );
-}
+};
 
-export default MyReviews;
+export default MyReviewsPage;
