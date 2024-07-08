@@ -33,7 +33,7 @@ const ProductList = () => {
       if (sortedProducts === 'asc' || sortedProducts === 'desc') {
         data = await getSortedProducts(sortedProducts);
       } else {
-        let response = await getAllProductsPage(pageNum, 10);
+        let response = await getAllProductsPage(pageNum, 20);
         setTotalPages(response.totalPages);
         data = response.items;
       }

@@ -6,7 +6,7 @@ import CourierBanner2 from './components/CourierBanner2'
 import FarmerBanner2 from './components/FarmerBanner2'
 const LandingPage = () => {
   return (
-    <div className='bg-secondary'>
+    <div className='bg-secondary overflow-y-hidden'>
       <MainNav />
       <Hero/>
       <AboutSection /> 
