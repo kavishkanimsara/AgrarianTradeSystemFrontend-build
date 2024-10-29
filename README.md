@@ -34,7 +34,7 @@ Ensure you have Node.js and npm installed.
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/username/agrarian-trade-system.git
+   git clone https://github.com/kavishkanimsara/AgrarianTradeSystemFrontend-build.git
 
 2. Navigate to the React project directory:
    ```bash
